@@ -4,6 +4,9 @@ var Twitter = require("twitter");
 //Include Spotify NPM package
 var Spotify = require('node-spotify-api');
 
+// Include the request NPM package
+var request = require("request");
+
 var spotify = new Spotify({
 	id: 'f8dca6b84e7c4de1888cef30cd5ef9be',
 	secret: 'c351e67dcf694da0b369f7eaf8dac7e7'
@@ -22,10 +25,10 @@ var client = new Twitter({
 
 //Variables to contain commands
 var operation = process.argv[2];
-var value = "";
+var value = process.argv[3];
 
 //Captures entire argument as one string
-for (i = 3; i < process.argv.length; i++) {
+for (i = 4; i < process.argv.length; i++) {
 
   // Build a string with the address.
   value = value + " " + process.argv[i];
@@ -71,6 +74,29 @@ else if (operation === "spotify-this-song") {
 //OMDB command
 else if (operation === "movie-this") {
 	console.log("Here is the movie information.");
+	// Run a request to the OMDB API with the movie specified
+	request("http://www.omdbapi.com/?t=" + value + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
+  // If the request is successful (i.e. if the response status code is 200)
+  if (!error && response.statusCode === 200) {
+  	//Log movie title...
+    console.log("===Title===\n" + JSON.parse(body).Title);
+    //...year released...
+    console.log("===Released===\n" + JSON.parse(body).Released);
+    //...IMDB rating...
+    console.log("===IMDB Rating===\n" + JSON.parse(body).imdbRating);
+    //...Rotten Tomatoes Rating...
+    console.log("===Rotten Tomatoes Rating===\n" + JSON.parse(body).Ratings[1].Value);
+    //...Country...
+    console.log("===Country===\n" + JSON.parse(body).Country);
+    //...Language...
+    console.log("===Language===\n" + JSON.parse(body).Language);
+    //...Plot...
+    console.log("===Plot===\n" + JSON.parse(body).Plot);
+    //...Actors...
+    console.log("===Actors===\n" + JSON.parse(body).Actors);
+}
+});
+
 }
 //Random command
 else if (operation === "do-what-it-says"){
