@@ -78,22 +78,23 @@ else if (operation === "movie-this") {
 	request("http://www.omdbapi.com/?t=" + value + "&y=&plot=short&apikey=trilogy", function(error, response, body) {
   // If the request is successful (i.e. if the response status code is 200)
   if (!error && response.statusCode === 200) {
+  	var omdbData = JSON.parse(body);
   	//Log movie title...
-    console.log("===Title===\n" + JSON.parse(body).Title);
+    console.log("===Title===\n", omdbData.Title);
     //...year released...
-    console.log("===Released===\n" + JSON.parse(body).Released);
+    console.log("===Released===\n", omdbData.Released);
     //...IMDB rating...
-    console.log("===IMDB Rating===\n" + JSON.parse(body).imdbRating);
+    console.log("===IMDB Rating===\n", omdbData.imdbRating);
     //...Rotten Tomatoes Rating...
-    console.log("===Rotten Tomatoes Rating===\n" + JSON.parse(body).Ratings[1].Value);
+    console.log("===Rotten Tomatoes Rating===\n", omdbData.Ratings[1].Value);
     //...Country...
-    console.log("===Country===\n" + JSON.parse(body).Country);
+    console.log("===Country===\n", omdbData.Country);
     //...Language...
-    console.log("===Language===\n" + JSON.parse(body).Language);
+    console.log("===Language===\n", omdbData.Language);
     //...Plot...
-    console.log("===Plot===\n" + JSON.parse(body).Plot);
+    console.log("===Plot===\n", omdbData.Plot);
     //...Actors...
-    console.log("===Actors===\n" + JSON.parse(body).Actors);
+    console.log("===Actors===\n", omdbData.Actors);
 }
 });
 
@@ -101,4 +102,8 @@ else if (operation === "movie-this") {
 //Random command
 else if (operation === "do-what-it-says"){
 	console.log("Something random!");
+}
+//Inform user of error and list possible options
+else {
+	console.log("Not a valid command.  Please enter one of the following...\n my-tweets\n spotify-this-song <song>\n movie-this <movie>\n do-what-it-says");
 }
