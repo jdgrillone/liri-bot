@@ -22,9 +22,16 @@ var client = new Twitter({
 
 //Variables to contain commands
 var operation = process.argv[2];
-var value = process.argv[3];
+var value = "";
 
-//Twitter call
+//Captures entire argument as one string
+for (i = 3; i < process.argv.length; i++) {
+
+  // Build a string with the address.
+  value = value + " " + process.argv[i];
+}
+
+//Twitter command
 if (operation === "my-tweets") {
 	console.log("Here are your last 20 tweets!");
 	var params = {screen_name: 'LiriHavoc'};
@@ -38,7 +45,8 @@ if (operation === "my-tweets") {
 		}
 	});
 }
-//Spotify call
+
+//Spotify command
 else if (operation === "spotify-this-song") {
 	console.log("Here is the song information.");
 	spotify.search({ type: 'track', query: value, limit: 1 }, function(err, data) {
@@ -50,20 +58,21 @@ else if (operation === "spotify-this-song") {
 		//Logs the song name
 		console.log("===Song===\n", data.tracks.items[0].name);
 		//Logs the song URL
+		console.log("===Preview===");
 		if (data.tracks.items[0].preview_url === null) {
-			console.log("===Preview===\nSorry, there is not a preview available for that track.")
+			console.log("Sorry, there is not a preview available for that track.")
 		}else {
-			console.log("===Preview===\n", data.tracks.items[0].preview_url);
+			console.log(data.tracks.items[0].preview_url);
 		}
 		//Logs the album
 		console.log("===Album===\n", data.tracks.items[0].album.name);
 	});
 }
-//OMDB call
+//OMDB command
 else if (operation === "movie-this") {
 	console.log("Here is the movie information.");
 }
-//Random call
+//Random command
 else if (operation === "do-what-it-says"){
 	console.log("Something random!");
 }
