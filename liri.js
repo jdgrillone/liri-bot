@@ -1,3 +1,6 @@
+//Require fs
+var fs = require("fs");
+
 //Include Twitter NPM package
 var Twitter = require("twitter");
 
@@ -22,7 +25,6 @@ var client = new Twitter({
 	access_token_secret: keys.access_token_secret
 });
 
-
 //Variables to contain commands
 var operation = process.argv[2];
 var value = process.argv[3];
@@ -40,10 +42,9 @@ if (operation === "my-tweets") {
 	var params = {screen_name: 'LiriHavoc'};
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 		if (!error) {
-			console.log("A");
-			for (i = 0; i < 3; i++){
-				console.log(tweets[i].created_at);
-				console.log(tweets[i].text);
+			for (i = 0; i < 20; i++){
+				console.log("========\n", tweets[i].created_at);
+				console.log("---", tweets[i].text);
 			}
 		}
 	});
@@ -51,24 +52,29 @@ if (operation === "my-tweets") {
 
 //Spotify command
 else if (operation === "spotify-this-song") {
+	var index = 0;
+	if (value === null || value === "" || value === undefined) {
+		var value = "The Sign";
+		index = 8;
+	}
 	console.log("Here is the song information.");
-	spotify.search({ type: 'track', query: value, limit: 1 }, function(err, data) {
+	spotify.search({ type: 'track', query: value, limit: 10 }, function(err, data) {
 		if (err) {
 			return console.log('Error occurred: ' + err);
-		}
+		};
 		//Logs the artist name
-		console.log("===Artist===\n", data.tracks.items[0].album.artists[0].name);
+		console.log("===Artist===\n", data.tracks.items[index].album.artists[0].name);
 		//Logs the song name
-		console.log("===Song===\n", data.tracks.items[0].name);
+		console.log("===Song===\n", data.tracks.items[index].name);
 		//Logs the song URL
 		console.log("===Preview===");
-		if (data.tracks.items[0].preview_url === null) {
+		if (data.tracks.items[index].preview_url === null) {
 			console.log("Sorry, there is not a preview available for that track.")
 		}else {
-			console.log(data.tracks.items[0].preview_url);
+			console.log(data.tracks.items[index].preview_url);
 		}
 		//Logs the album
-		console.log("===Album===\n", data.tracks.items[0].album.name);
+		console.log("===Album===\n", data.tracks.items[index].album.name);
 	});
 }
 //OMDB command
@@ -80,7 +86,7 @@ else if (operation === "movie-this") {
   if (!error && response.statusCode === 200) {
   	var omdbData = JSON.parse(body);
   	//Log movie title...
-    console.log("===Title===\n", omdbData.Title);
+  	console.log("===Title===\n", omdbData.Title);
     //...year released...
     console.log("===Released===\n", omdbData.Released);
     //...IMDB rating...
@@ -102,6 +108,36 @@ else if (operation === "movie-this") {
 //Random command
 else if (operation === "do-what-it-says"){
 	console.log("Something random!");
+	fs.readFile("random.txt", "utf8", function(error, data){
+		if(error) {
+			return console.log(error);
+		}
+
+		var dataArr = data.split(",");
+
+		value = dataArr[1];
+
+		spotify.search({ type: 'track', query: value, limit: 1 }, function(err, data) {
+			if (err) {
+				return console.log('Error occurred: ' + err);
+			}
+		//Logs the artist name
+		console.log("===Artist===\n", data.tracks.items[0].album.artists[0].name);
+		//Logs the song name
+		console.log("===Song===\n", data.tracks.items[0].name);
+		//Logs the song URL
+		console.log("===Preview===");
+		if (data.tracks.items[0].preview_url === null) {
+			console.log("Sorry, there is not a preview available for that track.")
+		}else {
+			console.log(data.tracks.items[0].preview_url);
+		}
+		//Logs the album
+		console.log("===Album===\n", data.tracks.items[0].album.name);
+
+
+	});
+	});
 }
 //Inform user of error and list possible options
 else {
